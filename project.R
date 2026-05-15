@@ -12,7 +12,7 @@ data$Potability <- factor(data$Potability, levels = c(0,1), labels = c('Non_Pota
 table(data$Potability)
 
 # proporzioni percentuali originali
-prop.table(table(data$Potability)*100)
+round(prop.table(table(data$Potability)),3)
 
 ## DATA SPLITTING
 set.seed(123)
@@ -22,11 +22,12 @@ train_set <- data[trainIndex, ]
 test_set <- data[-trainIndex, ]
 
 cat("\n--- Proporzioni nel Training Set ---\n")
-prop.table(table(train_set$Potability)*100)
+round(prop.table(table(train_set$Potability)),3)
 
 cat("\n--- Proporzioni nel Test Set ---\n")
-prop.table(table(test_set$Potability)*100)
+round(prop.table(table(test_set$Potability)),3)
 
 ## Counting misisng values
 missing_values = colSums(is.na(data))/nrow(data) * 100
 print(missing_values)
+
