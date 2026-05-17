@@ -81,7 +81,7 @@ set.seed(1)
 
 cvCtrl <- trainControl(
   method = "cv",
-  number = 5,
+  number = 10,
   classProbs = TRUE,
   summaryFunction = twoClassSummary
 )
@@ -106,4 +106,30 @@ df_subset <- train_balanced[, c(selected_features, "Potability")]
 # subset di TEST con le STESSE identiche variabili + il TARGET
 dataTestSubset <- test_final[, c(selected_features, "Potability")]
 
+## ---- TUNING DEI MODELLI --- ###
 
+#LASSO 
+set.seed(1)
+cvCtrl <- trainControl(method = "cv",number = 10, classProbs = TRUE, 
+                       summaryFunction = twoClassSummary)
+grid = expand.grid(.alpha=1,.lambda=seq(0, 1, by = 0.01))
+tuned_lasso <- train(
+  Potability~.,
+  data = df_subset,
+  method = "glmnet",
+  metric = "ROC",
+  trControl = cvCtrl,
+  tuneGrid = grid)
+tuned_lasso
+plot(tuned_lasso)
+confusionMatrix(tuned_lasso)
+
+#NAIVE BAYES 
+set.seed(1)
+cvCtrl <- trainControl(method = "cv",number = 10, classProbs = TRUE, 
+                       summaryFunction = twoClassSummary)
+tuned_naivebayes=train(Potability~.,
+                 data=df_subset,method = "naive_bayes",
+                 trControl = cvCtrl, tuneLength=5, na.action = na.pass) 
+tuned_naivebayes
+confusionMatrix(tuned_naivebayes)
