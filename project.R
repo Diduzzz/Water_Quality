@@ -65,6 +65,17 @@ set.seed(123)
 train_balanced <- ROSE(Potability~., data = train_final, seed = 123)$data
 print(round(prop.table(table(train_balanced$Potability)),3))
 
+## MODEL SELECTION UTILIZZANDO BORUTA
+library(Boruta)
+set.seed(123)
+Boruta_output <- Boruta(
+  Potability~., data = train_balanced,
+  doTrace = 2,
+  maxRuns = 100
+) 
+print(Boruta_output)
+plot(Boruta_output, las = 2, cex.axis = 0.7, main = 'Risultato della selezione boruta')
+
 ## MODEL SELECTION CON RANDOM FOREST E CROSS VALIDATION
 set.seed(1)
 
@@ -88,7 +99,8 @@ vimp=data.frame(vimp[1])
 vimp$var=row.names(vimp)
 vimp2=vimp[vimp$Overall>0,]
 
-selected_features <- row.names(vimp2)
+
+selected_features <- row.names(vimp2)   # notiamo che la variabile 'Organic_carbon' ha un valore pari a zero, quindi possiamo escluderlo
 # subset di TRAINING con le sole variabili selezionate + il TARGET
 df_subset <- train_balanced[, c(selected_features, "Potability")]
 # subset di TEST con le STESSE identiche variabili + il TARGET
